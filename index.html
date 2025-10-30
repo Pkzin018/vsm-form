@@ -219,45 +219,42 @@
     document.getElementById('status').innerText = 'Escolha o tipo de alteração à esquerda e preencha os dados.';
   }
 
- async function submitForm(e, formId){
-    e.preventDefault();
-    const form = document.getElementById(formId);
-    const data = Object.fromEntries(new FormData(form).entries());  // Coleta todos os dados do formulário
+ async function submitForm(e, formId) {
+  e.preventDefault();
+  const form = document.getElementById(formId);
+  const data = Object.fromEntries(new FormData(form).entries());  // Usando FormData
 
-    const required = formId === 'banco' ? ['razao','fantasia','cnpj_novo'] : ['razao2','fantasia2','cnpj_novo2'];
-    const missing = required.filter(k => !data[k] || data[k].trim()==='');
-    if(missing.length){
-      document.getElementById('status').innerHTML = '<div class="error">Preencha os campos obrigatórios: '+missing.join(', ')+'</div>';
-      return;
-    }
-
-    document.getElementById('status').innerHTML = '<div class="muted">Enviando...</div>';
-
-    try {
-      // Usando FormData
-      const formData = new FormData();
-      for (const key in data) formData.append(key, data[key]);
-
-      const resp = await fetch(
-        'https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec', 
-        { 
-          method: 'POST',
-          body: formData
-        }
-      );
-      
-      const text = await resp.text();
-      if (text.includes('ok') || text.includes('true')) {
-        document.getElementById('status').innerHTML = '<div class="success">✅ Dados enviados com sucesso!</div>';
-        form.reset();
-        setTimeout(() => goBack(), 1800);
-      } else {
-        document.getElementById('status').innerHTML = '<div class="error">Erro inesperado: '+text+'</div>';
-      }
-    } catch(err){
-      document.getElementById('status').innerHTML = '<div class="error">Erro de conexão: '+err.message+'</div>';
-    }
+  const required = formId === 'banco' ? ['razao', 'fantasia', 'cnpj_novo'] : ['razao2', 'fantasia2', 'cnpj_novo2'];
+  const missing = required.filter(k => !data[k] || data[k].trim() === '');
+  if (missing.length) {
+    document.getElementById('status').innerHTML = '<div class="error">Preencha os campos obrigatórios: ' + missing.join(', ') + '</div>';
+    return;
   }
+
+  document.getElementById('status').innerHTML = '<div class="muted">Enviando...</div>';
+
+  try {
+    const formData = new FormData();
+    for (const key in data) formData.append(key, data[key]);
+
+    const resp = await fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const text = await resp.text();
+    if (text.includes('ok') || text.includes('true')) {
+      document.getElementById('status').innerHTML = '<div class="success">✅ Dados enviados com sucesso!</div>';
+      form.reset();
+      setTimeout(() => goBack(), 1800);
+    } else {
+      document.getElementById('status').innerHTML = '<div class="error">Erro inesperado: ' + text + '</div>';
+    }
+
+  } catch (err) {
+    document.getElementById('status').innerHTML = '<div class="error">Erro de conexão: ' + err.message + '</div>';
+  }
+}
 
 </script>
 </body>
