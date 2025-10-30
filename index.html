@@ -234,7 +234,7 @@
     document.getElementById('status').innerHTML = '<div class="muted">Enviando...</div>';
 
     try{
-      const resp = await fetch('https://script.google.com/macros/s/AKfycbw6G-ZJFl_qGXSoWQMLWbimMvaYpH0Tn66b7T1cQ_AC/dev', {
+      const resp = await fetch('https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec', {
         method: 'POST',
         headers:{ 'Content-Type':'application/json' },
         body: JSON.stringify(data)
