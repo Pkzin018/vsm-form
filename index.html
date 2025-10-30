@@ -222,7 +222,10 @@
  async function submitForm(e, formId) {
   e.preventDefault();
   const form = document.getElementById(formId);
-  const data = Object.fromEntries(new FormData(form).entries());  // Usando FormData
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  // Verificar o conteúdo dos dados antes de enviar
+  console.log(data);
 
   const required = formId === 'banco' ? ['razao', 'fantasia', 'cnpj_novo'] : ['razao2', 'fantasia2', 'cnpj_novo2'];
   const missing = required.filter(k => !data[k] || data[k].trim() === '');
@@ -236,6 +239,9 @@
   try {
     const formData = new FormData();
     for (const key in data) formData.append(key, data[key]);
+
+    // Verificar o que está sendo enviado
+    console.log([...formData]);
 
     const resp = await fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec', {
       method: 'POST',
