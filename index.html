@@ -245,7 +245,7 @@
           body: formData
         }
       );
-
+      
       const text = await resp.text();
       if (text.includes('ok') || text.includes('true')) {
         document.getElementById('status').innerHTML = '<div class="success">✅ Dados enviados com sucesso!</div>';
