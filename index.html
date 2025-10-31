@@ -37,6 +37,7 @@
   .small{font-size:13px}
   textarea{min-height:84px;resize:vertical}
   .right-card h3{margin:0 0 8px;font-size:18px;color:var(--brand)}
+  hr{border:0;border-top:1px solid rgba(2,6,23,0.06);margin:12px 0}
 </style>
 </head>
 <body>
@@ -195,7 +196,7 @@
     <aside class="card right-card">
       <h3>Status</h3>
       <div id="status" class="muted">Escolha o tipo de alteração à esquerda e preencha os dados.</div>
-      <hr style="margin:12px 0">
+      <hr>
       <div class="muted small">
         <strong>Recebimento:</strong><br>
         Os dados serão enviados automaticamente por e-mail e salvos em uma planilha do Google.
@@ -205,57 +206,76 @@
 </main>
 
 <script>
-  function showForm(id){
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('banco').style.display = id === 'banco' ? 'block' : 'none';
-    document.getElementById('nova').style.display = id === 'nova' ? 'block' : 'none';
-    document.getElementById('status').innerText = 'Preencha o formulário e clique em Enviar.';
+/* ======= CONFIG ========
+   Substitua a URL abaixo pela URL da sua implantação do Apps Script (termina com /exec)
+   ======================= */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec';
+
+/* UI helpers */
+function showForm(id){
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('banco').style.display = id === 'banco' ? 'block' : 'none';
+  document.getElementById('nova').style.display = id === 'nova' ? 'block' : 'none';
+  document.getElementById('status').innerText = 'Preencha o formulário e clique em Enviar.';
+}
+
+function goBack(){
+  document.getElementById('step1').style.display = 'flex';
+  document.getElementById('banco').style.display = 'none';
+  document.getElementById('nova').style.display = 'none';
+  document.getElementById('status').innerText = 'Escolha o tipo de alteração à esquerda e preencha os dados.';
+}
+
+/* envio usando FormData (compatível com Apps Script) */
+async function submitForm(e, formId){
+  e.preventDefault();
+  const form = document.getElementById(formId);
+  const formData = new FormData(form);
+
+  // debug: mostra o conteúdo do FormData no console (abra F12)
+  console.log('FormData ->', [...formData]);
+
+  const required = formId === 'banco' ? ['razao', 'fantasia', 'cnpj_novo'] : ['razao2', 'fantasia2', 'cnpj_novo2'];
+  const missing = required.filter(k => !formData.get(k) || formData.get(k).trim() === '');
+  if (missing.length) {
+    document.getElementById('status').innerHTML = '<div class="error">Preencha os campos obrigatórios: ' + missing.join(', ') + '</div>';
+    return;
   }
 
-  function goBack(){
-    document.getElementById('step1').style.display = 'flex';
-    document.getElementById('banco').style.display = 'none';
-    document.getElementById('nova').style.display = 'none';
-    document.getElementById('status').innerText = 'Escolha o tipo de alteração à esquerda e preencha os dados.';
-  }
+  document.getElementById('status').innerHTML = '<div class="muted">⏳ Enviando...</div>';
 
- async function submitForm(e, formId){
-    e.preventDefault();
-    const form = document.getElementById(formId);
-    const formData = new FormData(form);  // Usando FormData
+  try {
+    const resp = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    });
 
-    console.log("Dados enviados:", [...formData]);  // Verifique os dados no console do navegador
+    const text = await resp.text();
+    console.log('Resposta do script:', resp.status, text);
 
-    const required = formId === 'banco' ? ['razao', 'fantasia', 'cnpj_novo'] : ['razao2', 'fantasia2', 'cnpj_novo2'];
-    const missing = required.filter(k => !formData.get(k) || formData.get(k).trim() === '');
-    if (missing.length) {
-      document.getElementById('status').innerHTML = '<div class="error">Preencha os campos obrigatórios: ' + missing.join(', ') + '</div>';
-      return;
+    // Apps Script responde com JSON {ok:true} — aceitamos texto também
+    if (resp.ok && (text.includes('"ok":true') || text.toLowerCase().includes('ok'))) {
+      document.getElementById('status').innerHTML = '<div class="success">✅ Dados enviados com sucesso!</div>';
+      form.reset();
+      setTimeout(()=>goBack(), 1400);
+    } else {
+      // mostra HTML de erro ou texto retornado
+      document.getElementById('status').innerHTML = '<div class="error">Erro inesperado: '+ (text || resp.status) +'</div>';
     }
 
-    document.getElementById('status').innerHTML = '<div class="muted">Enviando...</div>';
-
-    try {
-      const resp = await fetch('https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const text = await resp.text();
-      console.log(text);  // Verifique a resposta no console do navegador
-
-      if (text.includes('ok') || text.includes('true')) {
-        document.getElementById('status').innerHTML = '<div class="success">✅ Dados enviados com sucesso!</div>';
-        form.reset();
-        setTimeout(() => goBack(), 1800);
-      } else {
-        document.getElementById('status').innerHTML = '<div class="error">Erro inesperado: ' + text + '</div>';
-      }
-
-    } catch (err) {
-      document.getElementById('status').innerHTML = '<div class="error">Erro de conexão: ' + err.message + '</div>';
-    }
+  } catch (err) {
+    console.error('fetch error:', err);
+    document.getElementById('status').innerHTML = '<div class="error">Erro de conexão: '+ err.message +'</div>';
   }
+}
+
+/* Prevent direct execution when page loads: hide forms, show choices */
+document.addEventListener('DOMContentLoaded', () => {
+  // ensure initial state
+  document.getElementById('banco').style.display = 'none';
+  document.getElementById('nova').style.display = 'none';
+  document.getElementById('step1').style.display = 'flex';
+});
 </script>
 </body>
 </html>
