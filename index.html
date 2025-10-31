@@ -142,7 +142,7 @@
     document.getElementById('status').innerHTML='<div class="muted">Enviando...</div>';
 
     try{
-      const resp=await fetch('https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec',{
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwH0zXkNjxAfTEQIoeExmJN180vR8OCV7BFb1UKKvSG4CUz0Uqmu8OkDELXcsR8iLkZ7A/exec';,{
         method:'POST',
         body:formData
       });
