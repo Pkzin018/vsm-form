@@ -114,10 +114,13 @@ async function submitForm(e,formId){
   const data=Object.fromEntries(new FormData(form).entries());
   document.getElementById('status').innerHTML='<div class="muted">Enviando...</div>';
   try{
-    const resp=await fetch("https://script.google.com/macros/s/AKfycbw6G-ZJFl_qGXSoWQMLWbimMvaYpH0Tn66b7T1cQ_AC/dev",{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data)
+    const resp = await fetch('https://script.google.com/macros/s/AKfycbw6G-ZJFl_qGXSoWQMLWbimMvaYpH0Tn66b7T1cQ_AC/dev', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data),
+  mode: 'no-cors'  // 👈 adiciona compatibilidade direta com GitHub Pages
+});
+
     });
     const json=await resp.json();
     if(json.ok){
