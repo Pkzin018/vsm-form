@@ -9,7 +9,6 @@
 <style>
   :root{
     --brand:#002b5c;
-    --accent:#0074d9;
     --bg:#f6f7fb;
     --card:#ffffff;
     --muted:#6b7280;
@@ -28,15 +27,12 @@
   .option:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(2,27,68,0.06)}
   .option b{display:block;color:var(--brand)}
   label{display:block;font-weight:600;margin-top:12px;font-size:13px;color:#0b2540}
-  input[type="text"],select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #d2dbe8;margin-top:6px;font-size:14px}
+  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #d2dbe8;margin-top:6px;font-size:14px}
   button{background:var(--brand);color:#fff;border:none;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}
   .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
   .muted{color:var(--muted);font-size:13px}
-  .success{background:#e6ffef;border-color:#b7f0cf;color:#0b6b34;padding:10px;border-radius:8px}
-  .error{background:#ffecea;border-color:#ffbdb5;color:#8a1a1a;padding:10px;border-radius:8px}
-  .small{font-size:13px}
-  textarea{min-height:84px;resize:vertical}
-  .right-card h3{margin:0 0 8px;font-size:18px;color:var(--brand)}
+  .success{background:#e6ffef;border:1px solid #b7f0cf;color:#0b6b34;padding:10px;border-radius:8px}
+  .error{background:#ffecea;border:1px solid #ffbdb5;color:#8a1a1a;padding:10px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -51,62 +47,30 @@
       <div id="step1" class="choose">
         <div class="option" onclick="showForm('banco')">
           <b>Via Banco de Dados (sem custo)</b>
-          <p class="small muted">Atualiza apenas o CNPJ mantendo dados do cadastro anterior.</p>
+          <p class="muted small">Atualiza apenas o CNPJ mantendo dados do cadastro anterior.</p>
         </div>
         <div class="option" onclick="showForm('nova')">
           <b>Nova Loja (novo banco de dados)</b>
-          <p class="small muted">Cria nova empresa — importação e taxas opcionais.</p>
+          <p class="muted small">Cria nova empresa — importação e taxas opcionais.</p>
         </div>
       </div>
 
-      <!-- Form Banco -->
-      <form id="banco" style="display:none;" onsubmit="submitForm(event,'banco')" class="small">
+      <form id="banco" style="display:none;" onsubmit="submitForm(event,'banco')">
         <input type="hidden" name="tipo" value="Via Banco de Dados">
-        <label>Razão Social<input type="text" name="razao" placeholder="Razão social"></label>
-        <label>Nome Fantasia<input type="text" name="fantasia" placeholder="Nome fantasia"></label>
-        <label>CNPJ Novo<input type="text" name="cnpj_novo" placeholder="00.000.000/0000-00"></label>
-        <label>O novo CNPJ possui certificado digital?
-          <select name="certificado"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>O novo CNPJ está apto para realizar vendas?
-          <select name="vendas"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>Modelo de documento fiscal
-          <select name="modelo"><option value="" disabled selected>Selecione</option><option>SAT (SP)</option><option>ECF (SC)</option><option>NFC-e</option></select>
-        </label>
-        <label>O modelo já está vinculado ao novo CNPJ?
-          <select name="vinculado"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>O novo CNPJ possui cadastro no SNGPC?
-          <select name="sngpc"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>O novo CNPJ possui integração com a Avant Fiscal?
-          <select name="avant"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>O CNPJ antigo será finalizado?
-          <select name="finaliza"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>Observações<textarea name="observacoes"></textarea></label>
+        <label>Razão Social<input type="text" name="razao" required></label>
+        <label>Nome Fantasia<input type="text" name="fantasia" required></label>
+        <label>CNPJ Novo<input type="text" name="cnpj_novo" required></label>
         <div class="btn-row">
           <button type="button" onclick="goBack()">⬅ Voltar</button>
           <button type="submit">Enviar</button>
         </div>
       </form>
 
-      <!-- Form Nova Loja -->
-      <form id="nova" style="display:none;" onsubmit="submitForm(event,'nova')" class="small">
+      <form id="nova" style="display:none;" onsubmit="submitForm(event,'nova')">
         <input type="hidden" name="tipo" value="Nova Loja">
-        <label>Razão Social<input type="text" name="razao2"></label>
-        <label>Nome Fantasia<input type="text" name="fantasia2"></label>
-        <label>CNPJ Novo<input type="text" name="cnpj_novo2"></label>
-        <label>Importação de Estoque
-          <select name="estoque"><option value="" disabled selected>Selecione</option><option>Não importar</option><option>Importar estoque</option><option>Gerar notas de venda</option></select>
-        </label>
-        <label>Certificado Digital?<select name="certificado2"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select></label>
-        <label>Apto a Vendas?<select name="vendas2"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select></label>
-        <label>Integração Avant Fiscal?<select name="avant2"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select></label>
-        <label>Finalizar CNPJ antigo?<select name="finaliza2"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select></label>
-        <label>Observações<textarea name="observacoes"></textarea></label>
+        <label>Razão Social<input type="text" name="razao2" required></label>
+        <label>Nome Fantasia<input type="text" name="fantasia2" required></label>
+        <label>CNPJ Novo<input type="text" name="cnpj_novo2" required></label>
         <div class="btn-row">
           <button type="button" onclick="goBack()">⬅ Voltar</button>
           <button type="submit">Enviar</button>
@@ -114,7 +78,7 @@
       </form>
     </div>
 
-    <aside class="card right-card">
+    <aside class="card">
       <h3>Status</h3>
       <div id="status" class="muted">Escolha o tipo de alteração à esquerda e preencha os dados.</div>
     </aside>
@@ -122,44 +86,49 @@
 </main>
 
 <script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytgNbO26VzfMhTxSr4szxQLcYBmI33U5BfMBjVfipSjtZSl-lGXcVo766NOC17xBrODQ/exec";
+
   function showForm(id){
     document.getElementById('step1').style.display='none';
     document.getElementById('banco').style.display=id==='banco'?'block':'none';
     document.getElementById('nova').style.display=id==='nova'?'block':'none';
-    document.getElementById('status').innerText='Preencha o formulário e clique em Enviar.';
+    document.getElementById('status').innerText='Preencha e envie.';
   }
+
   function goBack(){
     document.getElementById('step1').style.display='flex';
     document.getElementById('banco').style.display='none';
     document.getElementById('nova').style.display='none';
-    document.getElementById('status').innerText='Escolha o tipo de alteração à esquerda e preencha os dados.';
+    document.getElementById('status').innerText='Escolha uma opção.';
   }
 
   async function submitForm(e, formId){
     e.preventDefault();
-    const form=document.getElementById(formId);
-    const formData=new FormData(form);
+    const form = document.getElementById(formId);
+    const data = Object.fromEntries(new FormData(form).entries());
+
     document.getElementById('status').innerHTML='<div class="muted">Enviando...</div>';
 
-    try{
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwH0zXkNjxAfTEQIoeExmJN180vR8OCV7BFb1UKKvSG4CUz0Uqmu8OkDELXcsR8iLkZ7A/exec';,{
-        method:'POST',
-        body:formData
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
       });
+      const json = await response.json();
+      console.log(json);
 
-      const text=await resp.text();
-      console.log("Resposta:", text);
-
-      if(text.includes('ok')){
+      if (json.ok) {
         document.getElementById('status').innerHTML='<div class="success">✅ Dados enviados com sucesso!</div>';
         form.reset();
-        setTimeout(()=>goBack(),1800);
+        setTimeout(goBack, 2000);
       } else {
-        document.getElementById('status').innerHTML='<div class="error">Erro inesperado: '+text+'</div>';
+        document.getElementById('status').innerHTML='<div class="error">❌ Erro: '+json.error+'</div>';
       }
 
-    } catch(err){
+    } catch (err) {
       document.getElementById('status').innerHTML='<div class="error">Erro de conexão: '+err.message+'</div>';
+      console.error(err);
     }
   }
 </script>
