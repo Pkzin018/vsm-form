@@ -7,8 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --brand:#002b5c; --accent:#0074d9; --bg:#f6f7fb; --card:#ffffff; --muted:#6b7280;
+  :root{
+    --brand:#002b5c;
+    --accent:#0074d9;
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --muted:#6b7280;
   }
   *{box-sizing:border-box;font-family:'Inter',system-ui,Helvetica,Arial,sans-serif}
   body{margin:0;background:var(--bg);color:#111;line-height:1.4}
@@ -29,7 +33,6 @@
   .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
   .muted{color:var(--muted);font-size:13px}
   .success{background:#e6ffef;border-color:#b7f0cf;color:#0b6b34;padding:10px;border-radius:8px}
-  .error{background:#ffecea;border-color:#ffbdb5;color:#8a1a1a;padding:10px;border-radius:8px}
   .small{font-size:13px}
   textarea{min-height:84px;resize:vertical}
   .right-card h3{margin:0 0 8px;font-size:18px;color:var(--brand)}
@@ -44,95 +47,122 @@
 <main>
   <div class="grid">
     <div class="card">
-      <div id="step1" class="choose">
-        <div class="option" onclick="showForm('banco')">
-          <b>Via Banco de Dados (sem custo)</b>
-          <p class="small muted">Atualiza apenas o CNPJ mantendo dados do cadastro anterior.</p>
-        </div>
-        <div class="option" onclick="showForm('nova')">
-          <b>Nova Loja (novo banco de dados)</b>
-          <p class="small muted">Cria nova empresa — importação e taxas opcionais.</p>
-        </div>
-      </div>
+      <!-- Form principal -->
+      <form 
+        action="https://formsubmit.co/cadastro@vsm.com" 
+        method="POST" 
+        class="small">
 
-      <!-- Form Banco -->
-      <form id="banco" style="display:none;" onsubmit="submitForm(event,'banco')" class="small">
-        <input type="hidden" name="tipo" value="Via Banco de Dados">
-        <label>Razão Social<input type="text" name="razao" required></label>
-        <label>Nome Fantasia<input type="text" name="fantasia" required></label>
-        <label>CNPJ Novo<input type="text" name="cnpj_novo" required></label>
+        <!-- Configurações ocultas do FormSubmit -->
+        <input type="hidden" name="_subject" value="Nova solicitação de alteração de CNPJ - VSM">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://vsm.com.br/obrigado.html">
+
+        <label>Tipo de Solicitação
+          <select name="tipo" required>
+            <option value="" disabled selected>Selecione...</option>
+            <option>Via Banco de Dados (sem custo)</option>
+            <option>Nova Loja (novo banco de dados)</option>
+          </select>
+        </label>
+
+        <label>Razão Social
+          <input type="text" name="razao" placeholder="Razão social" required>
+        </label>
+
+        <label>Nome Fantasia
+          <input type="text" name="fantasia" placeholder="Nome fantasia" required>
+        </label>
+
+        <label>CNPJ Novo
+          <input type="text" name="cnpj_novo" placeholder="00.000.000/0000-00" required>
+        </label>
+
+        <label>Importação de Estoque
+          <select name="estoque">
+            <option value="" selected disabled>Selecione...</option>
+            <option>Não importar (Sem custo)</option>
+            <option>Importar estoque (Exceto SNGPC) - R$ 100,00</option>
+            <option>Gerar notas de venda (Inclui SNGPC) - R$ 250,00</option>
+          </select>
+        </label>
+
         <label>O novo CNPJ possui certificado digital?
-          <select name="certificado"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
+          <select name="certificado">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
         </label>
-        <label>O novo CNPJ está apto para realizar vendas?
-          <select name="vendas"><option value="" disabled selected>Selecione</option><option>Sim</option><option>Não</option></select>
-        </label>
-        <label>Modelo de documento fiscal
-          <select name="modelo"><option value="" disabled selected>Selecione</option><option>SAT (SP)</option><option>ECF (SC)</option><option>NFC-e</option></select>
-        </label>
-        <label>Observações<textarea name="observacoes"></textarea></label>
-        <div class="btn-row"><button type="button" onclick="goBack()">⬅ Voltar</button><button type="submit">Enviar</button></div>
-      </form>
 
-      <!-- Form Nova Loja -->
-      <form id="nova" style="display:none;" onsubmit="submitForm(event,'nova')" class="small">
-        <input type="hidden" name="tipo" value="Nova Loja">
-        <label>Razão Social<input type="text" name="razao2" required></label>
-        <label>Nome Fantasia<input type="text" name="fantasia2" required></label>
-        <label>CNPJ Novo<input type="text" name="cnpj_novo2" required></label>
-        <label>Importação de Estoque<select name="estoque"><option value="" disabled selected>Selecione</option><option>Sem custo</option><option>Importar estoque - R$100</option><option>Gerar notas - R$250</option></select></label>
-        <label>Observações<textarea name="observacoes"></textarea></label>
-        <div class="btn-row"><button type="button" onclick="goBack()">⬅ Voltar</button><button type="submit">Enviar</button></div>
+        <label>O novo CNPJ está apto para realizar vendas?
+          <select name="vendas">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+
+        <label>Modelo de documento fiscal
+          <select name="modelo">
+            <option value="" disabled selected>Selecione...</option>
+            <option>SAT (SP)</option>
+            <option>ECF (SC)</option>
+            <option>NFC-e</option>
+          </select>
+        </label>
+
+        <label>O modelo já está vinculado ao novo CNPJ?
+          <select name="vinculado">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+
+        <label>O novo CNPJ possui cadastro no SNGPC?
+          <select name="sngpc">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+
+        <label>O novo CNPJ possui integração com a Avant Fiscal?
+          <select name="avant">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+
+        <label>O CNPJ antigo será finalizado?
+          <select name="finaliza">
+            <option value="" disabled selected>Selecione...</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+
+        <label>Observações
+          <textarea name="observacoes" placeholder="Alguma observação adicional (opcional)"></textarea>
+        </label>
+
+        <div class="btn-row">
+          <button type="submit">Enviar</button>
+        </div>
       </form>
     </div>
 
     <aside class="card right-card">
       <h3>Status</h3>
-      <div id="status" class="muted">Escolha o tipo de alteração à esquerda e preencha os dados.</div>
-      <hr style="margin:12px 0">
-      <div class="muted small"><strong>Recebimento:</strong><br>Os dados serão enviados automaticamente para o Google Sheets.</div>
+      <div class="muted small">
+        <p>Os dados preenchidos serão enviados diretamente por e-mail à equipe da VSM Informática e armazenados de forma segura.</p>
+      </div>
     </aside>
   </div>
 </main>
 
-<script>
-function showForm(id){
-  document.getElementById('step1').style.display='none';
-  document.getElementById('banco').style.display=id==='banco'?'block':'none';
-  document.getElementById('nova').style.display=id==='nova'?'block':'none';
-  document.getElementById('status').innerText='Preencha o formulário e clique em Enviar.';
-}
-function goBack(){
-  document.getElementById('step1').style.display='flex';
-  document.getElementById('banco').style.display='none';
-  document.getElementById('nova').style.display='none';
-  document.getElementById('status').innerText='Escolha o tipo de alteração.';
-}
-async function submitForm(e,formId){
-  e.preventDefault();
-  const form=document.getElementById(formId);
-  const data=Object.fromEntries(new FormData(form).entries());
-  document.getElementById('status').innerHTML='<div class="muted">Enviando...</div>';
-  try{
-    const resp = await fetch('https://script.google.com/macros/s/AKfycbw6G-ZJFl_qGXSoWQMLWbimMvaYpH0Tn66b7T1cQ_AC/dev', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data),
-  mode: 'no-cors'  // 👈 adiciona compatibilidade direta com GitHub Pages
-});
-
-    });
-    const json=await resp.json();
-    if(json.ok){
-      document.getElementById('status').innerHTML='<div class="success">✅ Dados enviados com sucesso!</div>';
-      form.reset();setTimeout(()=>goBack(),2000);
-    }else{
-      document.getElementById('status').innerHTML='<div class="error">Erro: '+json.error+'</div>';
-    }
-  }catch(err){
-    document.getElementById('status').innerHTML='<div class="error">Erro de conexão: '+err.message+'</div>';
-  }
-}
-</script>
 </body>
 </html>
